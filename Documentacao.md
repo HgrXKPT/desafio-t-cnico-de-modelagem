@@ -19,7 +19,7 @@ Modelagem de banco de dados relacional para estruturação de um sistema de e-co
 - **produto**
 - **categoria_produto**
 
-### 3. Relacionamentos (Lógica Draw.io)
+### 3. Relacionamentos
 
 - **usuario (1) ─── (0..n) endereco -> 1 usuario pode possuir nenhum ou muitos endereços, enquanto cada endereço só pertence a um usuario**
 - **usuario (1) ─── (0..n) pedido -> 1 usuario pode ter nenhum ou muitos pedidos, enquanto um pedido só pertence a um usuario**
