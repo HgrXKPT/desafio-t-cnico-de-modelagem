@@ -30,9 +30,9 @@ CREATE TABLE Endereco(
 CREATE TABLE Pedido(
     id int IDENTITY(1,1) PRIMARY KEY,
     data DATETIME DEFAULT GETDATE() ,
-    status INT NOT NULL,
+    status INT NOT NULL CONSTRAINT CHK_status_tipo CHECK(Status IN (1, 2, 3, 4)),  -- 1-Aguardando Pagamento 2-Processando NFE 3- Enviado 4- Entregue
     valor_total DECIMAL(18,2) NOT NULL CONSTRAINT CHK_valor_tamanho CHECK(valor_total > 0),
-    metodo_pagamento int NOT NULL,
+    metodo_pagamento int NOT NULL CONSTRAINT CHK_metodo_pagamento CHECK(metodo_pagamento IN (1, 2, 3)),  -- 1-Cartão 2-Boleto 3-Pix
     id_usuario int NOT NULL,
     FOREIGN KEY(id_usuario) REFERENCES Usuarios(id)
 
@@ -40,9 +40,9 @@ CREATE TABLE Pedido(
 
 CREATE TABLE Pagamento(
     id int IDENTITY(1,1) PRIMARY KEY,
-    metodo int NOT NULL,
+    metodo int NOT NULL CONSTRAINT CHK_metodo CHECK(metodo IN (1, 2, 3)),  -- 1-Cartão 2-Boleto 3-Pix
     valor DECIMAL(18,2) NOT NULL CONSTRAINT CHK_valor_tamanho CHECK(valor > 0),
-    status int NOT NULL,
+    status int NOT NULL CONSTRAINT CHK_status_tipo CHECK(Status IN (1, 2)), -- 1- Aguardando pagamento 2- Pagamento Concluido
     data_transacao DATETIME DEFAULT GETDATE(),
     id_pedido int not null,
     FOREIGN KEY(id_pedido) REFERENCES Pedido(id)
@@ -53,7 +53,7 @@ CREATE TABLE Vendedor(
     nome_empresa VARCHAR(100) NOT NULL,
     cnpj VARCHAR(14) NOT NULL CONSTRAINT CHK_cnpj_tamanho CHECK (LEN(cnpj) = 14),
     data_cadastro DATETIME DEFAULT GETDATE(),
-    status INT
+    status INT NOT NULL
 );
 
 CREATE TABLE Categoria_produto(
@@ -67,7 +67,7 @@ CREATE TABLE Produto(
     nome VARCHAR(100) NOT NULL,
     descricao VARCHAR(500) NOT NULL,
     preco DECIMAL(18,2) NOT NULL CONSTRAINT CHK_preco_tamanho CHECK(preco > 0),
-    quantidade_estoque int  NOT NULL,
+    quantidade_estoque int  NOT NULL CONSTRAINT CHK_quantidade_estoque CHECK(quantidade_estoque >= 0),
     status int NOT NULL,
     data_criacao DATETIME DEFAULT GETDATE(),
     id_categoria int NOT NULL,
@@ -85,7 +85,8 @@ CREATE TABLE Itens_pedido(
     id_pedido int NOT NULL,
     id_produto int NOT NULL,
     FOREIGN KEY(id_pedido) REFERENCES Pedido(id),
-    FOREIGN KEY(id_produto) REFERENCES Produto(id)
+    FOREIGN KEY(id_produto) REFERENCES Produto(id),
+    CONSTRAINT UQ_itens_pedido UNIQUE(id_pedido, id_produto)
 
 );
 
